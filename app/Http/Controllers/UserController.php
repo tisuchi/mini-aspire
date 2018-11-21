@@ -28,7 +28,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::find($id);
+        $user = User::with('loan')->find($id);
 
         if ( ! $user ) {
             return $this->errorResponse("The user hasn't found", 404);  

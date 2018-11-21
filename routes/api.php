@@ -20,3 +20,8 @@ Route::prefix('loans')->group(function () {
     Route::get('/{id}', 'LoanController@show')->name('showLoan');
     Route::post('/create', 'LoanController@store')->name('createLoan');
 });
+
+Route::prefix('repayments')->group(function () {
+    Route::get('/{id}', 'RepaymentController@show')->name('showRepayment');
+    Route::post('/create', 'RepaymentController@store')->name('createRepayment');
+});

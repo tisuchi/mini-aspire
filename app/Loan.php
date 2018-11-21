@@ -16,4 +16,13 @@ class Loan extends Model
 	    'total_amount'
     ];
 
+    /**
+     * A loan has many repayment
+     * @return [type] [description]
+     */
+    public function repayment()
+    {
+    	return $this->hasMany('App\Repayment', 'loan_id', 'id');
+    }
+
 }

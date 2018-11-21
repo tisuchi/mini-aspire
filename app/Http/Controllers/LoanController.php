@@ -63,7 +63,7 @@ class LoanController extends Controller
      */
     public function show($id)
     {
-    	$loan = Loan::find($id);
+    	$loan = Loan::with('repayment')->find($id);
 
     	if ( ! $loan ) {
     		return $this->errorResponse("The loan hasn't found", 404);	
