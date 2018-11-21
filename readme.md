@@ -50,5 +50,7 @@ The above command will crate the necessary tables in your provided database.
 Once you have done all the required configuration, then you can able to access the following api. You may use any kind of api client. In my side, I use (Postman)[https://www.getpostman.com/]. 
 
 
+## List of Route
+Screen Shot 2018-11-21 at 9.13.09 PM
 
 Thank you.
