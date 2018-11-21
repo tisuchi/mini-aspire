@@ -51,6 +51,6 @@ Once you have done all the required configuration, then you can able to access t
 
 
 ## List of Route
-Screen Shot 2018-11-21 at 9.13.09 PM
+![list of rout](https://github.com/tisuchi/mini-aspire/blob/master/screenshot/001.png)
 
 Thank you.
