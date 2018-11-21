@@ -26,8 +26,14 @@ class UserController extends Controller
      * @param  User   $user [description]
      * @return [type]       [description]
      */
-    public function show(User $user)
+    public function show($id)
     {
+        $user = User::find($id);
+
+        if ( ! $user ) {
+            return $this->errorResponse("The user hasn't found", 404);  
+        }
+
     	return Response::json([	
 			'status' => 'success',
             'user' => $user
