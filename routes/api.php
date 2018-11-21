@@ -9,5 +9,12 @@ use Illuminate\Http\Request;
 */
 
 Route::resource('users', 'UserController')->only([
-    'index', 'show'
+    'index', 'show', 'create'
 ]);
+
+Route::prefix('users')->group(function () {
+    Route::get('/', 'UserController@index')->name('users');
+    Route::get('/{id}', 'UserController@show')->name('showUser');
+    Route::post('/create', 'UserController@store')->name('createUser');
+    
+});
