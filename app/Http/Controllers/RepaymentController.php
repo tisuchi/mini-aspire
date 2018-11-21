@@ -10,9 +10,23 @@ use Illuminate\Http\Request;
 
 class RepaymentController extends Controller
 {
+	/**
+	 * Show a particular repayment data.
+	 * @param  [type] $id [description]
+	 * @return [type]     [description]
+	 */
     public function show($id)
     {
-    	return Repayment::with('loan')->find($id);
+    	$repayment = Repayment::with('loan')->find($id);
+
+    	if ( ! $repayment ) {
+            return $this->errorResponse("The Repayment data not found.", 404);
+        }
+
+    	return Response::json([	
+			'status' => 'success',
+            'repayment' => $repayment
+		], 200); 
     }
 
     /**
@@ -33,14 +47,14 @@ class RepaymentController extends Controller
         }
 
         // check whether the amount is minimum payable or not
-        $totalPayableAmount = $this->payableAmount(request('loan_id'));
+        $totalPayableAmount = (new Repayment)->payableAmount(request('loan_id'));
 
         if ( $totalPayableAmount > request('amount')) {
         	return $this->errorResponse("Opps! Minimum payable amount for this loan is " . $totalPayableAmount, 404);
         }
 
         // check how much can be repayable
-        $maximuPayableAmount = $this->repaymentUpTo(request('loan_id'));
+        $maximuPayableAmount = (new Repayment)->repaymentUpTo(request('loan_id'));
 
         if ( request('amount') > $maximuPayableAmount ) {
         	return $this->errorResponse("Opps! It will be repaid if you pay " . $maximuPayableAmount . " more for this loan.", 404);
@@ -62,48 +76,5 @@ class RepaymentController extends Controller
 			'status' => 'success',
             'repayment' => "The repayment has been done successfully."
 		], 200); 
-    }
-
-    /**
-     * Get total payment amount for any particular loan
-     * @param  [type] $loanId [description]
-     * @return [type]         [description]
-     */
-    public function payableAmount($loanId)
-    {
-    	$loan = Loan::find($loanId);
-
-		$payableAmount = round($loan->total_amount / $loan->duration);	
-    	$maxiumPayableAmount = $this->repaymentUpTo($loanId);
-
-    	if ( $maxiumPayableAmount > $payableAmount ) {
-    		return $payableAmount;
-    	}
-
-    	return $maxiumPayableAmount;
-    }
-
-    /**
-     * Check whether this loan can still repaymentable or not
-     * @param  [type] $loanId [description]
-     * @return [type]         [description]
-     */
-    public function canRepayment($loanId)
-    {
-    	$loan = Loan::with('repayment')->find($loanId);
-
-    	return $loan->total_amount > $loan->repayment->sum('amount');
-    }
-
-    /**
-     * Check how much maximun can be repayable
-     * @param  [type] $loanId [description]
-     * @return [type]         [description]
-     */
-    public function repaymentUpTo($loanId)
-    {
-    	$loan = Loan::with('repayment')->find($loanId);
-
-    	return $loan->total_amount - $loan->repayment->sum('amount');	
     }
 }

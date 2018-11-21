@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Loan;
 use Illuminate\Database\Eloquent\Model;
 
 class Repayment extends Model
@@ -21,16 +22,47 @@ class Repayment extends Model
     	return $this->belongsTo('App\Loan', 'loan_id', 'id');
     }
 
-    public function scopeTotalRepayment($query, $loanId)
+    /**
+     * Check how much maximun can be repayable
+     * @param  [type] $loanId [description]
+     * @return [type]         [description]
+     */
+    public function repaymentUpTo($loanId)
     {
-        return $query->where('loan_id', $loanId);
+    	$loan = Loan::with('repayment')->find($loanId);
+
+    	return $loan->total_amount - $loan->repayment->sum('amount');	
     }
 
-    public function scopeRepaymentLeft($query, $loanId)
+    /**
+     * Check whether this loan can still repaymentable or not
+     * @param  [type] $loanId [description]
+     * @return [type]         [description]
+     */
+    public function canRepayment($loanId)
     {
-    	return $this->where('loan_id', $loanId)->with('loan');
+    	$loan = Loan::with('repayment')->find($loanId);
+
+    	return $loan->total_amount > $loan->repayment->sum('amount');
     }
 
+    /**
+     * Get total payment amount for any particular loan
+     * @param  [type] $loanId [description]
+     * @return [type]         [description]
+     */
+    public function payableAmount($loanId)
+    {
+    	$loan = Loan::find($loanId);
 
+		$payableAmount = round($loan->total_amount / $loan->duration);	
+    	$maxiumPayableAmount = (new Repayment)->repaymentUpTo($loanId);
+
+    	if ( $maxiumPayableAmount > $payableAmount ) {
+    		return $payableAmount;
+    	}
+
+    	return $maxiumPayableAmount;
+    }
 
 }

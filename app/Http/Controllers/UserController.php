@@ -40,6 +40,11 @@ class UserController extends Controller
 		], 200); 
     }
 
+    /**
+     * Store a user data
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
     public function store(Request $request)
     {
     	$validator = Validator::make($request->all(), [
@@ -63,6 +68,5 @@ class UserController extends Controller
 			'status' => 'success',
             'user' => "The user has created successfully."
 		], 200); 
-
     }
 }
